@@ -2094,7 +2094,7 @@ $.extend(Selectize.prototype, {
 		var self = this;
 		if (!self.settings.create) return false;
 		var filter = self.settings.createFilter;
-		return input.length
+		return (input.length || self.settings.alwaysShowCreate)
 			&& (typeof filter !== 'function' || filter.apply(self, [input]))
 			&& (typeof filter !== 'string' || new RegExp(filter).test(input))
 			&& (!(filter instanceof RegExp) || filter.test(input));
