@@ -517,7 +517,7 @@
 		}
 	
 		// option-dependent defaults
-		self.settings.mode = self.settings.mode || (self.settings.maxItems === 1 ? 'single' : 'multi');
+		self.settings.mode = self.settings.mode || 'multi';
 		if (typeof self.settings.hideSelected !== 'boolean') {
 			self.settings.hideSelected = self.settings.mode === 'multi';
 		}
@@ -1062,7 +1062,9 @@
 	
 			var deactivate = function() {
 				self.close();
-				self.setTextboxValue('');
+				if (self.settings.clearOnBlur) {
+					self.setTextboxValue('');
+				}
 				self.setActiveItem(null);
 				self.setActiveOption(null);
 				self.setCaret(self.items.length);
@@ -1213,7 +1215,7 @@
 			var events = silent ? [] : ['change'];
 	
 			debounce_events(this, events, function() {
-				this.clear();
+				this.clear(silent);
 				this.addItems(value, silent);
 			});
 		},
@@ -1883,7 +1885,7 @@
 				}
 	
 				if (!self.options.hasOwnProperty(value)) return;
-				if (inputMode === 'single') self.clear();
+				if (inputMode === 'single') self.clear(silent);
 				if (inputMode === 'multi' && self.isFull()) return;
 	
 				$item = $(self.render('item', self.options[value]));
@@ -2540,7 +2542,7 @@
 			var self = this;
 			if (!self.settings.create) return false;
 			var filter = self.settings.createFilter;
-			return input.length
+			return (input.length || self.settings.alwaysShowCreate)
 				&& (typeof filter !== 'function' || filter.apply(self, [input]))
 				&& (typeof filter !== 'string' || new RegExp(filter).test(input))
 				&& (!(filter instanceof RegExp) || filter.test(input));
@@ -2641,8 +2643,6 @@
 		var field_optgroup_label = settings.optgroupLabelField;
 		var field_optgroup_value = settings.optgroupValueField;
 	
-		var optionsMap = {};
-	
 		/**
 		 * Initializes selectize from a <input type="text"> element.
 		 *
@@ -2682,6 +2682,7 @@
 		var init_select = function($input, settings_element) {
 			var i, n, tagName, $children, order = 0;
 			var options = settings_element.options;
+			var optionsMap = {};
 	
 			var readData = function($el) {
 				var data = attr_data && $el.attr(attr_data);
