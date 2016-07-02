@@ -49,7 +49,7 @@ $(function() {
 	<tr>
 		<td valign="top"><code>create</code></td>
 		<td valign="top">
-			Allows the user to create a new items that aren't in the list of options. This option can be any of the following: "true", "false" (disabled), or a function that accepts two arguments: "input" and "callback". The callback should be invoked with the final data for the option.</td>
+			Allows the user to create a new items that aren't in the list of options. This option can be any of the following: "true", "false" (disabled), or a function to process input. The function can take one of two forms: synchronous (with signature <code>function(input){}</code> or asynchronous (with signature <code>function(input, callback)</code>. In the synchronous case, the function should <code>return</code> an object for the options (eg, with defaults: <code>return { 'value': value, 'text': text };</code>). The asynchronous version should invoke the callback with the result in the same format as the object above (eg, <code>callback( { 'value': value, 'text': text});</code>)</td>
 		<td valign="top"><code>mixed</code></td>
 		<td valign="top"><code>false</code></td>
 	</tr>
@@ -168,7 +168,7 @@ $(function() {
 	</tr>
 	<tr>
 		<td valign="top"><code>options</code></td>
-		<td valign="top">Options available to select; array of objects. If your element i as &lt;select&gt; with &lt;option&gt;s specified this property gets populated automatically. Setting this property is convenient if you have your data as an array and want to automatically generate the &lt;option&gt;s.</td>
+		<td valign="top">Options available to select; array of objects. If your element is a &lt;select&gt; with &lt;option&gt;s specified this property gets populated automatically. Setting this property is convenient if you have your data as an array and want to automatically generate the &lt;option&gt;s.</td>
 		<td valign="top"><code>array</code></td>
 		<td valign="top"><code>[]</code></td>
 	</tr>
@@ -365,7 +365,9 @@ $(function() {
 	<tr>
 		<td valign="top"><code>render</code></td>
 		<td valign="top">
-			Custom rendering functions. Each function should accept two arguments: "data" and "escape" and return HTML (string) with a single root element.
+			Custom rendering functions. Each function should accept two
+			arguments: "data" and "escape" and return HTML (string or
+			DOM element) with a single root element.
 			The "escape" argument is a function that takes a string and escapes all special HTML characters.
 			This is very important to use to prevent XSS vulnerabilities.
             <table width="100%">
